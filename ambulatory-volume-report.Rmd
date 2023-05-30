@@ -666,357 +666,356 @@ knitr::include_graphics("Mount_Sinai_Logo_H.png")
 __________________________________________________________________________________________________________________________________________________________
 
 ## MSHS {.tabset .tabset-fade .tabset-pills}
-### MSHS Daily Volume
-
-```{r MSHS Daily Volume, echo = FALSE, warning = FALSE, message = FALSE}
-# daily_vol_mshs <- daily_vol %>%
-#   group_by(Appt.DateYear, Appt.Day, Visit.Method) %>%
-#   summarise(daily_vol = sum(daily_vol)) %>%
-#   arrange(Visit.Method, Appt.DateYear, Appt.Day) %>%
-#   group_by(Visit.Method) %>%
-#   mutate(prev_day = shift(daily_vol)) %>%
-#   mutate(perc_diff = percent((daily_vol - prev_day)/prev_day,1)) %>%
-#      mutate(Appt.DateYear = as.character(Appt.DateYear)) %>%
-#     filter(!is.na(prev_day)) %>%
-#   bind_rows(summarise(.,
-#                       across(where(is.integer), sum),
-#                       across(where(is.character), ~"Week Total"))) 
-# 
-# daily_vol_mshs_total <- daily_vol_mshs %>%
-#   filter(Appt.Day != "Week Total" & Visit.Method == "Total") 
-# daily_vol_mshs_total$Visit.Method <- NULL
-# 
-# daily_vol_mshs_person <- daily_vol_mshs %>%
-#   filter(Appt.Day != "Week Total" & Visit.Method == "IN PERSON")
-# daily_vol_mshs_person$Visit.Method <- NULL
-# 
-# daily_vol_mshs_tele <- daily_vol_mshs %>%
-#   filter(Appt.Day != "Week Total" & Visit.Method == "TELEHEALTH")
-# daily_vol_mshs_tele$Visit.Method <- NULL
-# 
-# aggregate_row <- daily_vol_mshs %>%
-#   filter(Appt.Day == "Week Total") %>%
-#   mutate(perc_diff = percent((daily_vol - prev_day)/prev_day,1)) %>%
-#   pivot_wider(
-#     names_from = Visit.Method,
-#     values_from = daily_vol:perc_diff
-#   ) %>%
-#   dplyr::select(Appt.DateYear, Appt.Day, daily_vol_Total, prev_day_Total, perc_diff_Total, 
-#          'daily_vol_IN PERSON', 'prev_day_IN PERSON', 'perc_diff_IN PERSON',
-#           daily_vol_TELEHEALTH,  prev_day_TELEHEALTH,  perc_diff_TELEHEALTH)
-# 
-# daily_vol_mshs_all <- merge(daily_vol_mshs_total, daily_vol_mshs_person, by = c("Appt.DateYear","Appt.Day"))
-# daily_vol_mshs_all <- merge(daily_vol_mshs_all, daily_vol_mshs_tele, by = c("Appt.DateYear","Appt.Day"))
-# colnames(aggregate_row) <- colnames(daily_vol_mshs_all)
-# daily_vol_mshs_all <- bind_rows(daily_vol_mshs_all, aggregate_row)
-# 
-# daily_vol_mshs_all <- daily_vol_mshs_all %>%
-#    mutate(across(c(5,8,11), ~replace(., is.na(.), 0)))
-# 
-# diff_formatter <- formatter("span",
-#   style = x ~ style(
-#     font.weight = "bold",
-#     color = ifelse(x < 0, "#ff3300", ifelse(x > 0, "#00b800", "lightgrey"))),
-#   x ~ icontext(ifelse(x >= 0, "arrow-up", "arrow-down"), x))
-# 
-# 
-# daily_vol_mshs_all$perc_diff.x <- diff_formatter(daily_vol_mshs_all$perc_diff.x)
-# daily_vol_mshs_all$perc_diff.y <- diff_formatter(daily_vol_mshs_all$perc_diff.y)
-# daily_vol_mshs_all$perc_diff <- diff_formatter(daily_vol_mshs_all$perc_diff)
-# 
-# col_names <- c("Date", "Day", rep(c("Today's Volume","Prior Day Volume","% Difference"),3))
-# 
-# header_above <- c("title" = length(daily_vol_mshs_all))
-# names(header_above) <- paste0("MSHS Ambulatory Daily Arrived Volume")
-# 
-# daily_vol_mshs_all %>% 
-#   dplyr::select(everything()) %>%
-#   replace(is.na(.), "--") %>%
-#   # mutate_all(funs(str_replace_all(., "NA", "-"))) %>%
-#   mutate_if(is.numeric, prettyNum, big.mark = ',') %>%
-#   kable(escape = F, align = "c",
-#         col.names = col_names) %>%
-#   kable_styling(bootstrap_options = "hover", full_width = FALSE, position = "center", row_label_position = "c", font_size = 14) %>%
-#   add_header_above(c(" ", " ", "Total" = 3,  "In Person" = 3, "Telehealth" = 3), background = c("white","white","#221f72","#7f7f7f" ,"#00aeef"), 
-#                    color = "white", font_size = 14) %>%
-#   add_header_above(header_above, background = "white", color = "black", font_size = 22, bold = T, align = "c") %>%
-#   column_spec(3:5, background = "#EBEBF9", width = "100px") %>%
-#   column_spec(6:8, background = "#F0F0F0", width = "100px") %>%
-#   column_spec(9:11, background = "#E6F8FF", width = "100px") %>%
-#   column_spec(1, width = "150px") %>%
-#   row_spec(nrow(daily_vol_mshs_all), bold = T)
-daily_vol_mshs <- daily_vol %>%
-  group_by(Appt.DateYear, Appt.Day, Visit.Method) %>%
-  summarise(daily_vol = sum(daily_vol, na.rm = TRUE)) %>%
-  arrange(Visit.Method, Appt.Day) %>%
-  group_by(Appt.Day, Visit.Method) %>%
-  mutate(prev_week = shift(daily_vol)) %>%
-  mutate(perc_diff = percent((daily_vol - prev_week)/prev_week,1)) %>%
-  filter(!is.na(prev_week)) %>%
-  arrange(Appt.DateYear) %>%
-  # filter(Appt.Week != min(Appt.Week)) %>%
-  mutate(Appt.DateYear = as.character(Appt.DateYear)) %>%
-  group_by(Visit.Method) %>%
-  bind_rows(summarise(.,
-                      across(where(is.integer), sum),
-                      across(where(is.character), ~"Week Total"))) 
-daily_vol_mshs_total <- daily_vol_mshs %>%
-  filter(Appt.Day != "Week Total" & Visit.Method == "Total") 
-daily_vol_mshs_total$Visit.Method <- NULL
-daily_vol_mshs_person <- daily_vol_mshs %>%
-  filter(Appt.Day != "Week Total" & Visit.Method == "IN PERSON")
-daily_vol_mshs_person$Visit.Method <- NULL
-daily_vol_mshs_tele <- daily_vol_mshs %>%
-  filter(Appt.Day != "Week Total" & Visit.Method == "TELEHEALTH")
-daily_vol_mshs_tele$Visit.Method <- NULL
-aggregate_row <- daily_vol_mshs %>%
-  filter(Appt.Day == "Week Total") %>%
-  mutate(perc_diff = percent((daily_vol - prev_week)/prev_week,1)) %>%
-  pivot_wider(
-    names_from = Visit.Method,
-    values_from = daily_vol:perc_diff
-  ) %>%
-  dplyr::select(Appt.DateYear, Appt.Day, daily_vol_Total, prev_week_Total, perc_diff_Total, 
-         'daily_vol_IN PERSON', 'prev_week_IN PERSON', 'perc_diff_IN PERSON',
-          daily_vol_TELEHEALTH,  prev_week_TELEHEALTH,  perc_diff_TELEHEALTH)
-daily_vol_mshs_all <- merge(daily_vol_mshs_total, daily_vol_mshs_person, by = c("Appt.DateYear","Appt.Day"))
-daily_vol_mshs_all <- merge(daily_vol_mshs_all, daily_vol_mshs_tele, by = c("Appt.DateYear","Appt.Day"))
-colnames(aggregate_row) <- colnames(daily_vol_mshs_all)
-daily_vol_mshs_all <- bind_rows(daily_vol_mshs_all, aggregate_row)
-diff_formatter <- formatter("span",
-  style = x ~ style(
-    font.weight = "bold",
-    color = ifelse(x < 0, "#ff3300", ifelse(x > 0, "#00b800", "lightgrey"))),
-  x ~ icontext(ifelse(x >= 0, "arrow-up", "arrow-down"), x))
-daily_vol_mshs_all$perc_diff.x <- diff_formatter(daily_vol_mshs_all$perc_diff.x)
-daily_vol_mshs_all$perc_diff.y <- diff_formatter(daily_vol_mshs_all$perc_diff.y)
-daily_vol_mshs_all$perc_diff <- diff_formatter(daily_vol_mshs_all$perc_diff)
-col_names <- c("Date", "Day", rep(c("Today's Volume","Same Day Prior Week","% Difference"),3))
-header_above <- c("title" = length(daily_vol_mshs_all))
-names(header_above) <- paste0("MSHS Ambulatory Daily Arrived Volume")
-daily_vol_mshs_all %>% 
-  dplyr::select(everything()) %>%
-  # replace(is.na(.), "--") %>%
-  # mutate_all(funs(str_replace_all(., "NA", "-"))) %>%
-  mutate_if(is.numeric, prettyNum, big.mark = ',') %>%
-  kable(escape = F, align = "c",
-        col.names = col_names) %>%
-  kable_styling(bootstrap_options = "hover", full_width = FALSE, position = "center", row_label_position = "c", font_size = 14) %>%
-  add_header_above(c(" ", " ", "Total" = 3,  "In Person" = 3, "Telehealth" = 3), background = c("white","white","#221f72","#7f7f7f" ,"#00aeef"), 
-                   color = "white", font_size = 14) %>%
-  add_header_above(header_above, background = "white", color = "black", font_size = 22, bold = T, align = "c") %>%
-  column_spec(3:5, background = "#EBEBF9", width = "100px") %>%
-  column_spec(6:8, background = "#F0F0F0", width = "100px") %>%
-  column_spec(9:11, background = "#E6F8FF", width = "100px") %>%
-  column_spec(1, width = "150px") %>%
-  row_spec(nrow(daily_vol_mshs_all), bold = T)
-```
-
-
-```{r MSHS Daily Volume Comparison Last Year, echo = FALSE, warning = FALSE, message = FALSE}
-daily_vol_last_year_mshs <- daily_vol_last_year %>%
-  group_by(Appt.DateYear, Appt.Day, Visit.Method) %>%
-  summarise(daily_vol = sum(daily_vol)) %>%
-  arrange(Visit.Method, Appt.Day) %>%
-  group_by(Visit.Method, Appt.Day) %>%
-  arrange(Visit.Method, Appt.DateYear, Appt.Day) %>%
-  mutate(prev_day = shift(daily_vol)) %>%
-  mutate(perc_diff = percent((daily_vol - prev_day)/prev_day,1)) %>%
-     mutate(Appt.DateYear = as.character(Appt.DateYear)) %>%
-    filter(!is.na(prev_day)) %>%
-  group_by(Visit.Method) %>%
-    bind_rows(dplyr::summarise(.,
-                      across(where(is.integer), sum),
-                      across(where(is.character), ~"Week Total"))) 
-daily_vol_last_year_mshs_total <- daily_vol_last_year_mshs %>%
-  filter(Appt.Day != "Week Total" & Visit.Method == "Total")
-daily_vol_last_year_mshs_total$Visit.Method <- NULL
-daily_vol_last_year_mshs_person <- daily_vol_last_year_mshs %>%
-  filter(Appt.Day != "Week Total" & Visit.Method == "IN PERSON")
-daily_vol_last_year_mshs_person$Visit.Method <- NULL
-daily_vol_last_year_mshs_tele <- daily_vol_last_year_mshs %>%
-  filter(Appt.Day != "Week Total" & Visit.Method == "TELEHEALTH")
-daily_vol_last_year_mshs_tele$Visit.Method <- NULL
-aggregate_row <- daily_vol_last_year_mshs %>%
-  filter(Appt.Day == "Week Total") %>%
-  mutate(perc_diff = percent((daily_vol - prev_day)/prev_day,1)) %>%
-  pivot_wider(
-    names_from = Visit.Method,
-    values_from = daily_vol:perc_diff
-  ) %>%
-  dplyr::select(Appt.DateYear, Appt.Day, daily_vol_Total, prev_day_Total, perc_diff_Total,
-         'daily_vol_IN PERSON', 'prev_day_IN PERSON', 'perc_diff_IN PERSON',
-          daily_vol_TELEHEALTH,  prev_day_TELEHEALTH,  perc_diff_TELEHEALTH)
-daily_vol_last_year_mshs_all <- merge(daily_vol_last_year_mshs_total, daily_vol_last_year_mshs_person, by = c("Appt.DateYear","Appt.Day"))
-daily_vol_last_year_mshs_all <- merge(daily_vol_last_year_mshs_all, daily_vol_last_year_mshs_tele, by = c("Appt.DateYear","Appt.Day"))
-colnames(aggregate_row) <- colnames(daily_vol_last_year_mshs_all)
-daily_vol_last_year_mshs_all <- bind_rows(daily_vol_last_year_mshs_all, aggregate_row)
-daily_vol_last_year_mshs_all <- daily_vol_last_year_mshs_all %>%
-   mutate(across(c(5,8,11), ~replace(., is.na(.), 0)))
-diff_formatter <- formatter("span",
-  style = x ~ style(
-    font.weight = "bold",
-    color = ifelse(x < 0, "#ff3300", ifelse(x > 0, "#00b800", "lightgrey"))),
-  x ~ icontext(ifelse(x >= 0, "arrow-up", "arrow-down"), x))
-daily_vol_last_year_mshs_all$perc_diff.x <- diff_formatter(daily_vol_last_year_mshs_all$perc_diff.x)
-daily_vol_last_year_mshs_all$perc_diff.y <- diff_formatter(daily_vol_last_year_mshs_all$perc_diff.y)
-daily_vol_last_year_mshs_all$perc_diff <- diff_formatter(daily_vol_last_year_mshs_all$perc_diff)
-col_names <- c("Date", "Day", rep(c("Today's Volume","Same Week Last Year","% Difference"),3))
-header_above <- c("title" = length(daily_vol_last_year_mshs_all))
-names(header_above) <- paste0("MSHS Ambulatory Daily Arrived Volume: Same Week Last Year Comparison")
-daily_vol_last_year_mshs_all %>%
-  dplyr::select(everything()) %>%
-  replace(is.na(.), "--") %>%
-  # mutate_all(funs(str_replace_all(., "NA", "-"))) %>%
-  mutate_if(is.numeric, prettyNum, big.mark = ',') %>%
-  kable(escape = F, align = "c",
-        col.names = col_names) %>%
-  kable_styling(bootstrap_options = "hover", full_width = FALSE, position = "center", row_label_position = "c", font_size = 14) %>%
-  add_header_above(c(" ", " ", "Total" = 3,  "In Person" = 3, "Telehealth" = 3), background = c("white","white","#221f72","#7f7f7f" ,"#00aeef"),
-                   color = "white", font_size = 14) %>%
-  add_header_above(header_above, background = "white", color = "black", font_size = 22, bold = T, align = "c") %>%
-  column_spec(3:5, background = "#EBEBF9", width = "100px") %>%
-  column_spec(6:8, background = "#F0F0F0", width = "100px") %>%
-  column_spec(9:11, background = "#E6F8FF", width = "100px") %>%
-  column_spec(1, width = "150px") %>%
-  row_spec(nrow(daily_vol_last_year_mshs_all), bold = T)
-```
+<!-- <!-- ### MSHS Daily Volume --> -->
+<!-- ```{r MSHS Daily Volume, echo = FALSE, warning = FALSE, message = FALSE} -->
+<!-- # daily_vol_mshs <- daily_vol %>% -->
+<!-- #   group_by(Appt.DateYear, Appt.Day, Visit.Method) %>% -->
+<!-- #   summarise(daily_vol = sum(daily_vol)) %>% -->
+<!-- #   arrange(Visit.Method, Appt.DateYear, Appt.Day) %>% -->
+<!-- #   group_by(Visit.Method) %>% -->
+<!-- #   mutate(prev_day = shift(daily_vol)) %>% -->
+<!-- #   mutate(perc_diff = percent((daily_vol - prev_day)/prev_day,1)) %>% -->
+<!-- #      mutate(Appt.DateYear = as.character(Appt.DateYear)) %>% -->
+<!-- #     filter(!is.na(prev_day)) %>% -->
+<!-- #   bind_rows(summarise(., -->
+<!-- #                       across(where(is.integer), sum), -->
+<!-- #                       across(where(is.character), ~"Week Total")))  -->
+<!-- #  -->
+<!-- # daily_vol_mshs_total <- daily_vol_mshs %>% -->
+<!-- #   filter(Appt.Day != "Week Total" & Visit.Method == "Total")  -->
+<!-- # daily_vol_mshs_total$Visit.Method <- NULL -->
+<!-- #  -->
+<!-- # daily_vol_mshs_person <- daily_vol_mshs %>% -->
+<!-- #   filter(Appt.Day != "Week Total" & Visit.Method == "IN PERSON") -->
+<!-- # daily_vol_mshs_person$Visit.Method <- NULL -->
+<!-- #  -->
+<!-- # daily_vol_mshs_tele <- daily_vol_mshs %>% -->
+<!-- #   filter(Appt.Day != "Week Total" & Visit.Method == "TELEHEALTH") -->
+<!-- # daily_vol_mshs_tele$Visit.Method <- NULL -->
+<!-- #  -->
+<!-- # aggregate_row <- daily_vol_mshs %>% -->
+<!-- #   filter(Appt.Day == "Week Total") %>% -->
+<!-- #   mutate(perc_diff = percent((daily_vol - prev_day)/prev_day,1)) %>% -->
+<!-- #   pivot_wider( -->
+<!-- #     names_from = Visit.Method, -->
+<!-- #     values_from = daily_vol:perc_diff -->
+<!-- #   ) %>% -->
+<!-- #   dplyr::select(Appt.DateYear, Appt.Day, daily_vol_Total, prev_day_Total, perc_diff_Total,  -->
+<!-- #          'daily_vol_IN PERSON', 'prev_day_IN PERSON', 'perc_diff_IN PERSON', -->
+<!-- #           daily_vol_TELEHEALTH,  prev_day_TELEHEALTH,  perc_diff_TELEHEALTH) -->
+<!-- #  -->
+<!-- # daily_vol_mshs_all <- merge(daily_vol_mshs_total, daily_vol_mshs_person, by = c("Appt.DateYear","Appt.Day")) -->
+<!-- # daily_vol_mshs_all <- merge(daily_vol_mshs_all, daily_vol_mshs_tele, by = c("Appt.DateYear","Appt.Day")) -->
+<!-- # colnames(aggregate_row) <- colnames(daily_vol_mshs_all) -->
+<!-- # daily_vol_mshs_all <- bind_rows(daily_vol_mshs_all, aggregate_row) -->
+<!-- #  -->
+<!-- # daily_vol_mshs_all <- daily_vol_mshs_all %>% -->
+<!-- #    mutate(across(c(5,8,11), ~replace(., is.na(.), 0))) -->
+<!-- #  -->
+<!-- # diff_formatter <- formatter("span", -->
+<!-- #   style = x ~ style( -->
+<!-- #     font.weight = "bold", -->
+<!-- #     color = ifelse(x < 0, "#ff3300", ifelse(x > 0, "#00b800", "lightgrey"))), -->
+<!-- #   x ~ icontext(ifelse(x >= 0, "arrow-up", "arrow-down"), x)) -->
+<!-- #  -->
+<!-- #  -->
+<!-- # daily_vol_mshs_all$perc_diff.x <- diff_formatter(daily_vol_mshs_all$perc_diff.x) -->
+<!-- # daily_vol_mshs_all$perc_diff.y <- diff_formatter(daily_vol_mshs_all$perc_diff.y) -->
+<!-- # daily_vol_mshs_all$perc_diff <- diff_formatter(daily_vol_mshs_all$perc_diff) -->
+<!-- #  -->
+<!-- # col_names <- c("Date", "Day", rep(c("Today's Volume","Prior Day Volume","% Difference"),3)) -->
+<!-- #  -->
+<!-- # header_above <- c("title" = length(daily_vol_mshs_all)) -->
+<!-- # names(header_above) <- paste0("MSHS Ambulatory Daily Arrived Volume") -->
+<!-- #  -->
+<!-- # daily_vol_mshs_all %>%  -->
+<!-- #   dplyr::select(everything()) %>% -->
+<!-- #   replace(is.na(.), "--") %>% -->
+<!-- #   # mutate_all(funs(str_replace_all(., "NA", "-"))) %>% -->
+<!-- #   mutate_if(is.numeric, prettyNum, big.mark = ',') %>% -->
+<!-- #   kable(escape = F, align = "c", -->
+<!-- #         col.names = col_names) %>% -->
+<!-- #   kable_styling(bootstrap_options = "hover", full_width = FALSE, position = "center", row_label_position = "c", font_size = 14) %>% -->
+<!-- #   add_header_above(c(" ", " ", "Total" = 3,  "In Person" = 3, "Telehealth" = 3), background = c("white","white","#221f72","#7f7f7f" ,"#00aeef"),  -->
+<!-- #                    color = "white", font_size = 14) %>% -->
+<!-- #   add_header_above(header_above, background = "white", color = "black", font_size = 22, bold = T, align = "c") %>% -->
+<!-- #   column_spec(3:5, background = "#EBEBF9", width = "100px") %>% -->
+<!-- #   column_spec(6:8, background = "#F0F0F0", width = "100px") %>% -->
+<!-- #   column_spec(9:11, background = "#E6F8FF", width = "100px") %>% -->
+<!-- #   column_spec(1, width = "150px") %>% -->
+<!-- #   row_spec(nrow(daily_vol_mshs_all), bold = T) -->
+<!-- daily_vol_mshs <- daily_vol %>% -->
+<!--   group_by(Appt.DateYear, Appt.Day, Visit.Method) %>% -->
+<!--   summarise(daily_vol = sum(daily_vol, na.rm = TRUE)) %>% -->
+<!--   arrange(Visit.Method, Appt.Day) %>% -->
+<!--   group_by(Appt.Day, Visit.Method) %>% -->
+<!--   mutate(prev_week = shift(daily_vol)) %>% -->
+<!--   mutate(perc_diff = percent((daily_vol - prev_week)/prev_week,1)) %>% -->
+<!--   filter(!is.na(prev_week)) %>% -->
+<!--   arrange(Appt.DateYear) %>% -->
+<!--   # filter(Appt.Week != min(Appt.Week)) %>% -->
+<!--   mutate(Appt.DateYear = as.character(Appt.DateYear)) %>% -->
+<!--   group_by(Visit.Method) %>% -->
+<!--   bind_rows(summarise(., -->
+<!--                       across(where(is.integer), sum), -->
+<!--                       across(where(is.character), ~"Week Total")))  -->
+<!-- daily_vol_mshs_total <- daily_vol_mshs %>% -->
+<!--   filter(Appt.Day != "Week Total" & Visit.Method == "Total")  -->
+<!-- daily_vol_mshs_total$Visit.Method <- NULL -->
+<!-- daily_vol_mshs_person <- daily_vol_mshs %>% -->
+<!--   filter(Appt.Day != "Week Total" & Visit.Method == "IN PERSON") -->
+<!-- daily_vol_mshs_person$Visit.Method <- NULL -->
+<!-- daily_vol_mshs_tele <- daily_vol_mshs %>% -->
+<!--   filter(Appt.Day != "Week Total" & Visit.Method == "TELEHEALTH") -->
+<!-- daily_vol_mshs_tele$Visit.Method <- NULL -->
+<!-- aggregate_row <- daily_vol_mshs %>% -->
+<!--   filter(Appt.Day == "Week Total") %>% -->
+<!--   mutate(perc_diff = percent((daily_vol - prev_week)/prev_week,1)) %>% -->
+<!--   pivot_wider( -->
+<!--     names_from = Visit.Method, -->
+<!--     values_from = daily_vol:perc_diff -->
+<!--   ) %>% -->
+<!--   dplyr::select(Appt.DateYear, Appt.Day, daily_vol_Total, prev_week_Total, perc_diff_Total,  -->
+<!--          'daily_vol_IN PERSON', 'prev_week_IN PERSON', 'perc_diff_IN PERSON', -->
+<!--           daily_vol_TELEHEALTH,  prev_week_TELEHEALTH,  perc_diff_TELEHEALTH) -->
+<!-- daily_vol_mshs_all <- merge(daily_vol_mshs_total, daily_vol_mshs_person, by = c("Appt.DateYear","Appt.Day")) -->
+<!-- daily_vol_mshs_all <- merge(daily_vol_mshs_all, daily_vol_mshs_tele, by = c("Appt.DateYear","Appt.Day")) -->
+<!-- colnames(aggregate_row) <- colnames(daily_vol_mshs_all) -->
+<!-- daily_vol_mshs_all <- bind_rows(daily_vol_mshs_all, aggregate_row) -->
+<!-- diff_formatter <- formatter("span", -->
+<!--   style = x ~ style( -->
+<!--     font.weight = "bold", -->
+<!--     color = ifelse(x < 0, "#ff3300", ifelse(x > 0, "#00b800", "lightgrey"))), -->
+<!--   x ~ icontext(ifelse(x >= 0, "arrow-up", "arrow-down"), x)) -->
+<!-- daily_vol_mshs_all$perc_diff.x <- diff_formatter(daily_vol_mshs_all$perc_diff.x) -->
+<!-- daily_vol_mshs_all$perc_diff.y <- diff_formatter(daily_vol_mshs_all$perc_diff.y) -->
+<!-- daily_vol_mshs_all$perc_diff <- diff_formatter(daily_vol_mshs_all$perc_diff) -->
+<!-- col_names <- c("Date", "Day", rep(c("Today's Volume","Same Day Prior Week","% Difference"),3)) -->
+<!-- header_above <- c("title" = length(daily_vol_mshs_all)) -->
+<!-- names(header_above) <- paste0("MSHS Ambulatory Daily Arrived Volume") -->
+<!-- daily_vol_mshs_all %>%  -->
+<!--   dplyr::select(everything()) %>% -->
+<!--   # replace(is.na(.), "--") %>% -->
+<!--   # mutate_all(funs(str_replace_all(., "NA", "-"))) %>% -->
+<!--   mutate_if(is.numeric, prettyNum, big.mark = ',') %>% -->
+<!--   kable(escape = F, align = "c", -->
+<!--         col.names = col_names) %>% -->
+<!--   kable_styling(bootstrap_options = "hover", full_width = FALSE, position = "center", row_label_position = "c", font_size = 14) %>% -->
+<!--   add_header_above(c(" ", " ", "Total" = 3,  "In Person" = 3, "Telehealth" = 3), background = c("white","white","#221f72","#7f7f7f" ,"#00aeef"),  -->
+<!--                    color = "white", font_size = 14) %>% -->
+<!--   add_header_above(header_above, background = "white", color = "black", font_size = 22, bold = T, align = "c") %>% -->
+<!--   column_spec(3:5, background = "#EBEBF9", width = "100px") %>% -->
+<!--   column_spec(6:8, background = "#F0F0F0", width = "100px") %>% -->
+<!--   column_spec(9:11, background = "#E6F8FF", width = "100px") %>% -->
+<!--   column_spec(1, width = "150px") %>% -->
+<!--   row_spec(nrow(daily_vol_mshs_all), bold = T) -->
+<!-- ``` -->
 
 
-### MSHS Weekly Volume
-```{r MSHS Weekly Volume, echo = FALSE, warning = FALSE, message = FALSE}
-weekly_vol_mshs <- weekly_vol %>%
-  group_by(Appt.Week, Visit.Method) %>%
-  summarise(weekly_vol = sum(weekly_vol, na.rm = TRUE)) %>%
-  arrange(Visit.Method, Appt.Week) %>%
-  group_by(Visit.Method) %>%
-  mutate(prev_week = shift(weekly_vol)) %>%
-  mutate(perc_diff = percent((weekly_vol - prev_week)/prev_week,1)) %>%
-  filter(!is.na(prev_week)) %>%
-  # filter(Appt.Week != min(Appt.Week)) %>%
-   mutate(Appt.Week = as.character(Appt.Week)) %>%
-  bind_rows(summarise(.,
-                      across(where(is.integer), sum),
-                      across(where(is.character), ~"Past 4-Week Total"))) 
-weekly_vol_mshs_total <- weekly_vol_mshs %>%
-  filter(Appt.Week != "Past 4-Week Total" & Visit.Method == "Total") 
-weekly_vol_mshs_total$Visit.Method <- NULL
-weekly_vol_mshs_person <- weekly_vol_mshs %>%
-  filter(Appt.Week != "Past 4-Week Total" & Visit.Method == "IN PERSON")
-weekly_vol_mshs_person$Visit.Method <- NULL
-weekly_vol_mshs_tele <- weekly_vol_mshs %>%
-  filter(Appt.Week != "Past 4-Week Total" & Visit.Method == "TELEHEALTH")
-weekly_vol_mshs_tele$Visit.Method <- NULL
-aggregate_row <- weekly_vol_mshs %>%
-  filter(Appt.Week == "Past 4-Week Total") %>%
-  mutate(perc_diff = percent((weekly_vol - prev_week)/prev_week,1)) %>%
-  pivot_wider(
-    names_from = Visit.Method,
-    values_from = weekly_vol:perc_diff
-  ) %>%
-  dplyr::select(Appt.Week, weekly_vol_Total, prev_week_Total, perc_diff_Total, 
-         'weekly_vol_IN PERSON', 'prev_week_IN PERSON', 'perc_diff_IN PERSON',
-          weekly_vol_TELEHEALTH,  prev_week_TELEHEALTH,  perc_diff_TELEHEALTH)
-weekly_vol_mshs_all <- merge(weekly_vol_mshs_total, weekly_vol_mshs_person, by = c("Appt.Week"))
-weekly_vol_mshs_all <- merge(weekly_vol_mshs_all, weekly_vol_mshs_tele, by = c("Appt.Week"))
-colnames(aggregate_row) <- colnames(weekly_vol_mshs_all)
-weekly_vol_mshs_all <- bind_rows(weekly_vol_mshs_all, aggregate_row)
-diff_formatter <- formatter("span",
-  style = x ~ style(
-    font.weight = "bold",
-    color = ifelse(x < 0, "#ff3300", ifelse(x > 0, "#00b800", "lightgrey"))),
-  x ~ icontext(ifelse(x >= 0, "arrow-up", "arrow-down"), x))
-weekly_vol_mshs_all$perc_diff.x <- diff_formatter(weekly_vol_mshs_all$perc_diff.x)
-weekly_vol_mshs_all$perc_diff.y <- diff_formatter(weekly_vol_mshs_all$perc_diff.y)
-weekly_vol_mshs_all$perc_diff <- diff_formatter(weekly_vol_mshs_all$perc_diff)
-col_names <- c("Week of", rep(c("Prior Week","Previous Week","% Difference"),3))
-header_above <- c("title" = length(weekly_vol_mshs_all))
-names(header_above) <- paste0("MSHS Ambulatory Weekly Arrived Volume")
-weekly_vol_mshs_all %>% 
-  dplyr::select(everything()) %>%
-  #   replace(is.na(.), "-") %>%
-  # mutate_all(funs(str_replace_all(., "NA", "-"))) %>%
-  mutate_if(is.numeric, prettyNum, big.mark = ',') %>%
-  kable(escape = F, align = "c",
-        col.names = col_names) %>%
-  kable_styling(bootstrap_options = "hover", full_width = FALSE, position = "center", row_label_position = "c", font_size = 14) %>%
-  add_header_above(c(" ", "Total" = 3,  "In Person" = 3, "Telehealth" = 3), background = c("white","#221f72","#7f7f7f" ,"#00aeef"), 
-                   color = "white", font_size = 14) %>%
-  add_header_above(header_above, background = "white", color = "black", font_size = 22, bold = T, align = "c") %>%
-  column_spec(2:4, background = "#EBEBF9", width = "100px") %>%
-  column_spec(5:7, background = "#F0F0F0", width = "100px") %>%
-  column_spec(8:10, background = "#E6F8FF", width = "100px") %>%
-  column_spec(1, width = "150px") %>%
-  row_spec(nrow(weekly_vol_mshs_all), bold = T)
+<!-- ```{r MSHS Daily Volume Comparison Last Year, echo = FALSE, warning = FALSE, message = FALSE} -->
+<!-- daily_vol_last_year_mshs <- daily_vol_last_year %>% -->
+<!--   group_by(Appt.DateYear, Appt.Day, Visit.Method) %>% -->
+<!--   summarise(daily_vol = sum(daily_vol)) %>% -->
+<!--   arrange(Visit.Method, Appt.Day) %>% -->
+<!--   group_by(Visit.Method, Appt.Day) %>% -->
+<!--   arrange(Visit.Method, Appt.DateYear, Appt.Day) %>% -->
+<!--   mutate(prev_day = shift(daily_vol)) %>% -->
+<!--   mutate(perc_diff = percent((daily_vol - prev_day)/prev_day,1)) %>% -->
+<!--      mutate(Appt.DateYear = as.character(Appt.DateYear)) %>% -->
+<!--     filter(!is.na(prev_day)) %>% -->
+<!--   group_by(Visit.Method) %>% -->
+<!--     bind_rows(dplyr::summarise(., -->
+<!--                       across(where(is.integer), sum), -->
+<!--                       across(where(is.character), ~"Week Total")))  -->
+<!-- daily_vol_last_year_mshs_total <- daily_vol_last_year_mshs %>% -->
+<!--   filter(Appt.Day != "Week Total" & Visit.Method == "Total") -->
+<!-- daily_vol_last_year_mshs_total$Visit.Method <- NULL -->
+<!-- daily_vol_last_year_mshs_person <- daily_vol_last_year_mshs %>% -->
+<!--   filter(Appt.Day != "Week Total" & Visit.Method == "IN PERSON") -->
+<!-- daily_vol_last_year_mshs_person$Visit.Method <- NULL -->
+<!-- daily_vol_last_year_mshs_tele <- daily_vol_last_year_mshs %>% -->
+<!--   filter(Appt.Day != "Week Total" & Visit.Method == "TELEHEALTH") -->
+<!-- daily_vol_last_year_mshs_tele$Visit.Method <- NULL -->
+<!-- aggregate_row <- daily_vol_last_year_mshs %>% -->
+<!--   filter(Appt.Day == "Week Total") %>% -->
+<!--   mutate(perc_diff = percent((daily_vol - prev_day)/prev_day,1)) %>% -->
+<!--   pivot_wider( -->
+<!--     names_from = Visit.Method, -->
+<!--     values_from = daily_vol:perc_diff -->
+<!--   ) %>% -->
+<!--   dplyr::select(Appt.DateYear, Appt.Day, daily_vol_Total, prev_day_Total, perc_diff_Total, -->
+<!--          'daily_vol_IN PERSON', 'prev_day_IN PERSON', 'perc_diff_IN PERSON', -->
+<!--           daily_vol_TELEHEALTH,  prev_day_TELEHEALTH,  perc_diff_TELEHEALTH) -->
+<!-- daily_vol_last_year_mshs_all <- merge(daily_vol_last_year_mshs_total, daily_vol_last_year_mshs_person, by = c("Appt.DateYear","Appt.Day")) -->
+<!-- daily_vol_last_year_mshs_all <- merge(daily_vol_last_year_mshs_all, daily_vol_last_year_mshs_tele, by = c("Appt.DateYear","Appt.Day")) -->
+<!-- colnames(aggregate_row) <- colnames(daily_vol_last_year_mshs_all) -->
+<!-- daily_vol_last_year_mshs_all <- bind_rows(daily_vol_last_year_mshs_all, aggregate_row) -->
+<!-- daily_vol_last_year_mshs_all <- daily_vol_last_year_mshs_all %>% -->
+<!--    mutate(across(c(5,8,11), ~replace(., is.na(.), 0))) -->
+<!-- diff_formatter <- formatter("span", -->
+<!--   style = x ~ style( -->
+<!--     font.weight = "bold", -->
+<!--     color = ifelse(x < 0, "#ff3300", ifelse(x > 0, "#00b800", "lightgrey"))), -->
+<!--   x ~ icontext(ifelse(x >= 0, "arrow-up", "arrow-down"), x)) -->
+<!-- daily_vol_last_year_mshs_all$perc_diff.x <- diff_formatter(daily_vol_last_year_mshs_all$perc_diff.x) -->
+<!-- daily_vol_last_year_mshs_all$perc_diff.y <- diff_formatter(daily_vol_last_year_mshs_all$perc_diff.y) -->
+<!-- daily_vol_last_year_mshs_all$perc_diff <- diff_formatter(daily_vol_last_year_mshs_all$perc_diff) -->
+<!-- col_names <- c("Date", "Day", rep(c("Today's Volume","Same Week Last Year","% Difference"),3)) -->
+<!-- header_above <- c("title" = length(daily_vol_last_year_mshs_all)) -->
+<!-- names(header_above) <- paste0("MSHS Ambulatory Daily Arrived Volume: Same Week Last Year Comparison") -->
+<!-- daily_vol_last_year_mshs_all %>% -->
+<!--   dplyr::select(everything()) %>% -->
+<!--   replace(is.na(.), "--") %>% -->
+<!--   # mutate_all(funs(str_replace_all(., "NA", "-"))) %>% -->
+<!--   mutate_if(is.numeric, prettyNum, big.mark = ',') %>% -->
+<!--   kable(escape = F, align = "c", -->
+<!--         col.names = col_names) %>% -->
+<!--   kable_styling(bootstrap_options = "hover", full_width = FALSE, position = "center", row_label_position = "c", font_size = 14) %>% -->
+<!--   add_header_above(c(" ", " ", "Total" = 3,  "In Person" = 3, "Telehealth" = 3), background = c("white","white","#221f72","#7f7f7f" ,"#00aeef"), -->
+<!--                    color = "white", font_size = 14) %>% -->
+<!--   add_header_above(header_above, background = "white", color = "black", font_size = 22, bold = T, align = "c") %>% -->
+<!--   column_spec(3:5, background = "#EBEBF9", width = "100px") %>% -->
+<!--   column_spec(6:8, background = "#F0F0F0", width = "100px") %>% -->
+<!--   column_spec(9:11, background = "#E6F8FF", width = "100px") %>% -->
+<!--   column_spec(1, width = "150px") %>% -->
+<!--   row_spec(nrow(daily_vol_last_year_mshs_all), bold = T) -->
+<!-- ``` -->
 
-weekly_vol_last_year_mshs <- weekly_vol_last_year %>%
-  group_by(Appt.Year, Appt.WeekNum, Appt.Week, Visit.Method) %>%
-  summarise(weekly_vol = sum(weekly_vol, na.rm = TRUE)) %>%
-  arrange(Appt.WeekNum, Visit.Method, Appt.Year) %>%
-  group_by(Appt.WeekNum, Visit.Method) %>%
-  mutate(prev_week = shift(weekly_vol)) %>%
-  mutate(perc_diff = percent((weekly_vol - prev_week)/prev_week,1)) %>%
-  filter(!is.na(prev_week)) %>%
-  ungroup() %>%
-  dplyr::select(-c(Appt.Year,Appt.WeekNum)) %>%
-  # filter(Appt.Week != min(Appt.Week)) %>%
-   mutate(Appt.Week = as.character(Appt.Week)) %>%
-  group_by(Visit.Method) %>%
-  bind_rows(summarise(.,
-                      across(where(is.integer), sum),
-                      across(where(is.character), ~"Past 4-Week Total"))) 
-weekly_vol_last_year_mshs_total <- weekly_vol_last_year_mshs %>%
-  filter(Appt.Week != "Past 4-Week Total" & Visit.Method == "Total") 
-weekly_vol_last_year_mshs_total$Visit.Method <- NULL
-weekly_vol_last_year_mshs_person <- weekly_vol_last_year_mshs %>%
-  filter(Appt.Week != "Past 4-Week Total" & Visit.Method == "IN PERSON")
-weekly_vol_last_year_mshs_person$Visit.Method <- NULL
-weekly_vol_last_year_mshs_tele <- weekly_vol_last_year_mshs %>%
-  filter(Appt.Week != "Past 4-Week Total" & Visit.Method == "TELEHEALTH")
-weekly_vol_last_year_mshs_tele$Visit.Method <- NULL
-aggregate_row <- weekly_vol_last_year_mshs %>%
-  filter(Appt.Week == "Past 4-Week Total") %>%
-  mutate(perc_diff = percent((weekly_vol - prev_week)/prev_week,1)) %>%
-  pivot_wider(
-    names_from = Visit.Method,
-    values_from = weekly_vol:perc_diff
-  ) %>%
-  dplyr::select(Appt.Week, weekly_vol_Total, prev_week_Total, perc_diff_Total, 
-         'weekly_vol_IN PERSON', 'prev_week_IN PERSON', 'perc_diff_IN PERSON',
-          weekly_vol_TELEHEALTH,  prev_week_TELEHEALTH,  perc_diff_TELEHEALTH)
-weekly_vol_last_year_mshs_all <- merge(weekly_vol_last_year_mshs_total, weekly_vol_last_year_mshs_person, by = c("Appt.Week"))
-weekly_vol_last_year_mshs_all <- merge(weekly_vol_last_year_mshs_all, weekly_vol_last_year_mshs_tele, by = c("Appt.Week"))
-colnames(aggregate_row) <- colnames(weekly_vol_last_year_mshs_all)
-weekly_vol_last_year_mshs_all <- bind_rows(weekly_vol_last_year_mshs_all, aggregate_row)
-diff_formatter <- formatter("span",
-  style = x ~ style(
-    font.weight = "bold",
-    color = ifelse(x < 0, "#ff3300", ifelse(x > 0, "#00b800", "lightgrey"))),
-  x ~ icontext(ifelse(x >= 0, "arrow-up", "arrow-down"), x))
-weekly_vol_last_year_mshs_all$perc_diff.x <- diff_formatter(weekly_vol_last_year_mshs_all$perc_diff.x)
-weekly_vol_last_year_mshs_all$perc_diff.y <- diff_formatter(weekly_vol_last_year_mshs_all$perc_diff.y)
-weekly_vol_last_year_mshs_all$perc_diff <- diff_formatter(weekly_vol_last_year_mshs_all$perc_diff)
-col_names <- c("Week of", rep(c("Prior Week","Same Week Last Year","% Difference"),3))
-header_above <- c("title" = length(weekly_vol_last_year_mshs_all))
-names(header_above) <- paste0("MSHS Ambulatory Weekly Arrived Volume: Same Week Last Year Comparison")
 
-weekly_vol_last_year_mshs_all %>% 
-  dplyr::select(everything()) %>%
-  #   replace(is.na(.), "-") %>%
-  # mutate_all(funs(str_replace_all(., "NA", "-"))) %>%
-  mutate_if(is.numeric, prettyNum, big.mark = ',') %>%
-  kable(escape = F, align = "c",
-        col.names = col_names) %>%
-  kable_styling(bootstrap_options = "hover", full_width = FALSE, position = "center", row_label_position = "c", font_size = 14) %>%
-  add_header_above(c(" ", "Total" = 3,  "In Person" = 3, "Telehealth" = 3), background = c("white","#221f72","#7f7f7f" ,"#00aeef"), 
-                   color = "white", font_size = 14) %>%
-  add_header_above(header_above, background = "white", color = "black", font_size = 22, bold = T, align = "c") %>%
-  column_spec(2:4, background = "#EBEBF9", width = "100px") %>%
-  column_spec(5:7, background = "#F0F0F0", width = "100px") %>%
-  column_spec(8:10, background = "#E6F8FF", width = "100px") %>%
-  column_spec(1, width = "150px") %>%
-  row_spec(nrow(weekly_vol_last_year_mshs_all), bold = T)
-```
+<!-- ### MSHS Weekly Volume -->
+<!-- ```{r MSHS Weekly Volume, echo = FALSE, warning = FALSE, message = FALSE} -->
+<!-- weekly_vol_mshs <- weekly_vol %>% -->
+<!--   group_by(Appt.Week, Visit.Method) %>% -->
+<!--   summarise(weekly_vol = sum(weekly_vol, na.rm = TRUE)) %>% -->
+<!--   arrange(Visit.Method, Appt.Week) %>% -->
+<!--   group_by(Visit.Method) %>% -->
+<!--   mutate(prev_week = shift(weekly_vol)) %>% -->
+<!--   mutate(perc_diff = percent((weekly_vol - prev_week)/prev_week,1)) %>% -->
+<!--   filter(!is.na(prev_week)) %>% -->
+<!--   # filter(Appt.Week != min(Appt.Week)) %>% -->
+<!--    mutate(Appt.Week = as.character(Appt.Week)) %>% -->
+<!--   bind_rows(summarise(., -->
+<!--                       across(where(is.integer), sum), -->
+<!--                       across(where(is.character), ~"Past 4-Week Total")))  -->
+<!-- weekly_vol_mshs_total <- weekly_vol_mshs %>% -->
+<!--   filter(Appt.Week != "Past 4-Week Total" & Visit.Method == "Total")  -->
+<!-- weekly_vol_mshs_total$Visit.Method <- NULL -->
+<!-- weekly_vol_mshs_person <- weekly_vol_mshs %>% -->
+<!--   filter(Appt.Week != "Past 4-Week Total" & Visit.Method == "IN PERSON") -->
+<!-- weekly_vol_mshs_person$Visit.Method <- NULL -->
+<!-- weekly_vol_mshs_tele <- weekly_vol_mshs %>% -->
+<!--   filter(Appt.Week != "Past 4-Week Total" & Visit.Method == "TELEHEALTH") -->
+<!-- weekly_vol_mshs_tele$Visit.Method <- NULL -->
+<!-- aggregate_row <- weekly_vol_mshs %>% -->
+<!--   filter(Appt.Week == "Past 4-Week Total") %>% -->
+<!--   mutate(perc_diff = percent((weekly_vol - prev_week)/prev_week,1)) %>% -->
+<!--   pivot_wider( -->
+<!--     names_from = Visit.Method, -->
+<!--     values_from = weekly_vol:perc_diff -->
+<!--   ) %>% -->
+<!--   dplyr::select(Appt.Week, weekly_vol_Total, prev_week_Total, perc_diff_Total,  -->
+<!--          'weekly_vol_IN PERSON', 'prev_week_IN PERSON', 'perc_diff_IN PERSON', -->
+<!--           weekly_vol_TELEHEALTH,  prev_week_TELEHEALTH,  perc_diff_TELEHEALTH) -->
+<!-- weekly_vol_mshs_all <- merge(weekly_vol_mshs_total, weekly_vol_mshs_person, by = c("Appt.Week")) -->
+<!-- weekly_vol_mshs_all <- merge(weekly_vol_mshs_all, weekly_vol_mshs_tele, by = c("Appt.Week")) -->
+<!-- colnames(aggregate_row) <- colnames(weekly_vol_mshs_all) -->
+<!-- weekly_vol_mshs_all <- bind_rows(weekly_vol_mshs_all, aggregate_row) -->
+<!-- diff_formatter <- formatter("span", -->
+<!--   style = x ~ style( -->
+<!--     font.weight = "bold", -->
+<!--     color = ifelse(x < 0, "#ff3300", ifelse(x > 0, "#00b800", "lightgrey"))), -->
+<!--   x ~ icontext(ifelse(x >= 0, "arrow-up", "arrow-down"), x)) -->
+<!-- weekly_vol_mshs_all$perc_diff.x <- diff_formatter(weekly_vol_mshs_all$perc_diff.x) -->
+<!-- weekly_vol_mshs_all$perc_diff.y <- diff_formatter(weekly_vol_mshs_all$perc_diff.y) -->
+<!-- weekly_vol_mshs_all$perc_diff <- diff_formatter(weekly_vol_mshs_all$perc_diff) -->
+<!-- col_names <- c("Week of", rep(c("Prior Week","Previous Week","% Difference"),3)) -->
+<!-- header_above <- c("title" = length(weekly_vol_mshs_all)) -->
+<!-- names(header_above) <- paste0("MSHS Ambulatory Weekly Arrived Volume") -->
+<!-- weekly_vol_mshs_all %>%  -->
+<!--   dplyr::select(everything()) %>% -->
+<!--   #   replace(is.na(.), "-") %>% -->
+<!--   # mutate_all(funs(str_replace_all(., "NA", "-"))) %>% -->
+<!--   mutate_if(is.numeric, prettyNum, big.mark = ',') %>% -->
+<!--   kable(escape = F, align = "c", -->
+<!--         col.names = col_names) %>% -->
+<!--   kable_styling(bootstrap_options = "hover", full_width = FALSE, position = "center", row_label_position = "c", font_size = 14) %>% -->
+<!--   add_header_above(c(" ", "Total" = 3,  "In Person" = 3, "Telehealth" = 3), background = c("white","#221f72","#7f7f7f" ,"#00aeef"),  -->
+<!--                    color = "white", font_size = 14) %>% -->
+<!--   add_header_above(header_above, background = "white", color = "black", font_size = 22, bold = T, align = "c") %>% -->
+<!--   column_spec(2:4, background = "#EBEBF9", width = "100px") %>% -->
+<!--   column_spec(5:7, background = "#F0F0F0", width = "100px") %>% -->
+<!--   column_spec(8:10, background = "#E6F8FF", width = "100px") %>% -->
+<!--   column_spec(1, width = "150px") %>% -->
+<!--   row_spec(nrow(weekly_vol_mshs_all), bold = T) -->
+
+<!-- weekly_vol_last_year_mshs <- weekly_vol_last_year %>% -->
+<!--   group_by(Appt.Year, Appt.WeekNum, Appt.Week, Visit.Method) %>% -->
+<!--   summarise(weekly_vol = sum(weekly_vol, na.rm = TRUE)) %>% -->
+<!--   arrange(Appt.WeekNum, Visit.Method, Appt.Year) %>% -->
+<!--   group_by(Appt.WeekNum, Visit.Method) %>% -->
+<!--   mutate(prev_week = shift(weekly_vol)) %>% -->
+<!--   mutate(perc_diff = percent((weekly_vol - prev_week)/prev_week,1)) %>% -->
+<!--   filter(!is.na(prev_week)) %>% -->
+<!--   ungroup() %>% -->
+<!--   dplyr::select(-c(Appt.Year,Appt.WeekNum)) %>% -->
+<!--   # filter(Appt.Week != min(Appt.Week)) %>% -->
+<!--    mutate(Appt.Week = as.character(Appt.Week)) %>% -->
+<!--   group_by(Visit.Method) %>% -->
+<!--   bind_rows(summarise(., -->
+<!--                       across(where(is.integer), sum), -->
+<!--                       across(where(is.character), ~"Past 4-Week Total")))  -->
+<!-- weekly_vol_last_year_mshs_total <- weekly_vol_last_year_mshs %>% -->
+<!--   filter(Appt.Week != "Past 4-Week Total" & Visit.Method == "Total")  -->
+<!-- weekly_vol_last_year_mshs_total$Visit.Method <- NULL -->
+<!-- weekly_vol_last_year_mshs_person <- weekly_vol_last_year_mshs %>% -->
+<!--   filter(Appt.Week != "Past 4-Week Total" & Visit.Method == "IN PERSON") -->
+<!-- weekly_vol_last_year_mshs_person$Visit.Method <- NULL -->
+<!-- weekly_vol_last_year_mshs_tele <- weekly_vol_last_year_mshs %>% -->
+<!--   filter(Appt.Week != "Past 4-Week Total" & Visit.Method == "TELEHEALTH") -->
+<!-- weekly_vol_last_year_mshs_tele$Visit.Method <- NULL -->
+<!-- aggregate_row <- weekly_vol_last_year_mshs %>% -->
+<!--   filter(Appt.Week == "Past 4-Week Total") %>% -->
+<!--   mutate(perc_diff = percent((weekly_vol - prev_week)/prev_week,1)) %>% -->
+<!--   pivot_wider( -->
+<!--     names_from = Visit.Method, -->
+<!--     values_from = weekly_vol:perc_diff -->
+<!--   ) %>% -->
+<!--   dplyr::select(Appt.Week, weekly_vol_Total, prev_week_Total, perc_diff_Total,  -->
+<!--          'weekly_vol_IN PERSON', 'prev_week_IN PERSON', 'perc_diff_IN PERSON', -->
+<!--           weekly_vol_TELEHEALTH,  prev_week_TELEHEALTH,  perc_diff_TELEHEALTH) -->
+<!-- weekly_vol_last_year_mshs_all <- merge(weekly_vol_last_year_mshs_total, weekly_vol_last_year_mshs_person, by = c("Appt.Week")) -->
+<!-- weekly_vol_last_year_mshs_all <- merge(weekly_vol_last_year_mshs_all, weekly_vol_last_year_mshs_tele, by = c("Appt.Week")) -->
+<!-- colnames(aggregate_row) <- colnames(weekly_vol_last_year_mshs_all) -->
+<!-- weekly_vol_last_year_mshs_all <- bind_rows(weekly_vol_last_year_mshs_all, aggregate_row) -->
+<!-- diff_formatter <- formatter("span", -->
+<!--   style = x ~ style( -->
+<!--     font.weight = "bold", -->
+<!--     color = ifelse(x < 0, "#ff3300", ifelse(x > 0, "#00b800", "lightgrey"))), -->
+<!--   x ~ icontext(ifelse(x >= 0, "arrow-up", "arrow-down"), x)) -->
+<!-- weekly_vol_last_year_mshs_all$perc_diff.x <- diff_formatter(weekly_vol_last_year_mshs_all$perc_diff.x) -->
+<!-- weekly_vol_last_year_mshs_all$perc_diff.y <- diff_formatter(weekly_vol_last_year_mshs_all$perc_diff.y) -->
+<!-- weekly_vol_last_year_mshs_all$perc_diff <- diff_formatter(weekly_vol_last_year_mshs_all$perc_diff) -->
+<!-- col_names <- c("Week of", rep(c("Prior Week","Same Week Last Year","% Difference"),3)) -->
+<!-- header_above <- c("title" = length(weekly_vol_last_year_mshs_all)) -->
+<!-- names(header_above) <- paste0("MSHS Ambulatory Weekly Arrived Volume: Same Week Last Year Comparison") -->
+
+<!-- weekly_vol_last_year_mshs_all %>%  -->
+<!--   dplyr::select(everything()) %>% -->
+<!--   #   replace(is.na(.), "-") %>% -->
+<!--   # mutate_all(funs(str_replace_all(., "NA", "-"))) %>% -->
+<!--   mutate_if(is.numeric, prettyNum, big.mark = ',') %>% -->
+<!--   kable(escape = F, align = "c", -->
+<!--         col.names = col_names) %>% -->
+<!--   kable_styling(bootstrap_options = "hover", full_width = FALSE, position = "center", row_label_position = "c", font_size = 14) %>% -->
+<!--   add_header_above(c(" ", "Total" = 3,  "In Person" = 3, "Telehealth" = 3), background = c("white","#221f72","#7f7f7f" ,"#00aeef"),  -->
+<!--                    color = "white", font_size = 14) %>% -->
+<!--   add_header_above(header_above, background = "white", color = "black", font_size = 22, bold = T, align = "c") %>% -->
+<!--   column_spec(2:4, background = "#EBEBF9", width = "100px") %>% -->
+<!--   column_spec(5:7, background = "#F0F0F0", width = "100px") %>% -->
+<!--   column_spec(8:10, background = "#E6F8FF", width = "100px") %>% -->
+<!--   column_spec(1, width = "150px") %>% -->
+<!--   row_spec(nrow(weekly_vol_last_year_mshs_all), bold = T) -->
+<!-- ``` -->
 
 
 ### MSHS Monthly Volume
@@ -1490,7 +1489,7 @@ reactable(monthly_vol_mshs_specialty,
           highlight = TRUE,
           # filterable = TRUE,
           pagination = FALSE,
-          # height = 800,
+          height = 800,
           wrap = TRUE,
           
           # groupBy = c("Campus.Specialty"),
@@ -1727,7 +1726,7 @@ reactable(monthly_vol_mshs_specialty,
           highlight = TRUE,
           # filterable = TRUE,
           pagination = FALSE,
-          # height = 800,
+          height = 800,
           wrap = TRUE,
           
           # groupBy = c("Campus.Specialty"),
