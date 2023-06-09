@@ -1251,8 +1251,8 @@ g1 <- ggplot(vol_trend_mshs,
   # scale_y_continuous(limits=c(0,(max(vol_trend_mshs$monthly_vol))*1.3), labels = scales::number_format(accuracy = 1))+
   #  geom_hline(yintercept=avg_2019, linetype = "dashed") +
   #  annotate(geom="text", label=paste0("2019 Monthly Average: ", prettyNum(avg_2019, big.mark = ',')), x=11, y=avg_2019, vjust=-1, size=3.5, fontface="bold")+
-  geom_hline(yintercept=avg_2022, linetype = "dashed") +
-   annotate(geom="text", label=paste0("2022 Monthly Average:\n", prettyNum(avg_2022, big.mark = ',')), x=11, y=avg_2022, vjust=-1, size=3.5, fontface="bold")+
+  # geom_hline(yintercept=avg_2022, linetype = "dashed") +
+  #  annotate(geom="text", label=paste0("2022 Monthly Average:\n", prettyNum(avg_2022, big.mark = ',')), x=11, y=avg_2022, vjust=-1, size=3.5, fontface="bold")+
    labs(caption = paste0("*2022 Monthly Average: ", prettyNum(avg_2022, big.mark = ','),"\n**Includes Rad Onc data up to ", rad_onc_date, " and Radiology data up to ",radiology_date))+
       theme(plot.caption = element_text(hjust = 0, vjust = -1, face="italic", size = 10))
     n <- length(unique(vol_trend_mshs$Appt.Year)) - 1
@@ -1346,8 +1346,8 @@ g1 <- ggplot(vol_trend_mshs,
                    size=3.5, fontface="bold.italic")+
      # geom_hline(yintercept=avg_2019, linetype = "dashed") +
      # geom_text(data = ann_text_2019, aes(label = lab), vjust=-0.5, size=3.5, fontface="bold")+
-          geom_hline(yintercept=avg_2022, linetype = "dotted", color="red", size=0.8) +
-          geom_text(data = ann_text_2022, aes(label = lab), size=2.5, fontface="bold", vjust = -1, nudge_x = 0, color = "red")+
+          # geom_hline(yintercept=avg_2022, linetype = "dotted", color="red", size=0.8) +
+          # geom_text(data = ann_text_2022, aes(label = lab), size=2.5, fontface="bold", vjust = -1, nudge_x = 0, color = "red")+
      # labs(caption = paste0("*2019 Monthly Average: ", prettyNum(avg_2019, big.mark = ','),"\n**Includes Rad Onc data up to October, 2023", " and Radiology data up to October, 2023"))+
         labs(caption = paste0("*2022 Monthly Average: ", prettyNum(avg_2022, big.mark = ','),"\n**Includes Rad Onc data up to ", rad_onc_date, " and Radiology data up to ",radiology_date))+
       theme(plot.caption = element_text(hjust = 0, vjust = 0, face="italic", size = 12),
@@ -1644,7 +1644,7 @@ reactable(monthly_vol_mshs_specialty,
 
 ### MSHS Volume by Specialty `r full_month`-`r full_year`
 <span style='font-size: 16px; color: black'>**MSHS `r full_month`-`r full_year` MTD Volume by Specialty**</span><br/>
-<span style='font-size: 14px; color: black'>*Includes visits up to `r visits_end_date` </span><br/>
+<!-- <span style='font-size: 14px; color: black'>*Includes visits up to `r visits_end_date` </span><br/> -->
 <!-- <span style='font-size: 14px; color: black'>*Includes Rad Onc data up to `r rad_onc_date` and Radiology data up to `r radiology_date`</span><br/> -->
 ```{r MSHS Volume by Speicalty, echo = FALSE, warning = FALSE, message = FALSE}
 # Total Current Month Volume
@@ -2355,8 +2355,8 @@ graph <- ggplot(vol_trend_site,
        subtitle = paste0("Based on data from 2022-01-01 to ", max(scheduling_data$Appt.DateYear),"\n"),
        y = NULL, x = NULL, fill = NULL)+
   theme_new_line()+
-  geom_hline(yintercept=avg_2022, linetype = "dashed") +
-   annotate(geom="text", label=paste0("2022 Monthly Average:\n", prettyNum(avg_2022, big.mark = ',')), x=11, y=avg_2022, vjust=-1, size=3.5, fontface="bold")+
+  # geom_hline(yintercept=avg_2022, linetype = "dashed") +
+  #  annotate(geom="text", label=paste0("2022 Monthly Average:\n", prettyNum(avg_2022, big.mark = ',')), x=11, y=avg_2022, vjust=-1, size=3.5, fontface="bold")+
           labs(caption = paste0(
             # "*2019 Monthly Average: ", prettyNum(avg_2019, big.mark = ','),
             "\n**Includes Rad Onc data up to ", rad_onc_date, " and Radiology data up to ",radiology_date))+
@@ -2447,8 +2447,8 @@ vol_breakdown_site_graph <- function(site){
                 size=3, fontface="bold", position = position_stack(vjust = 0.5))+
       stat_summary(fun.y = sum, vjust = -1, aes(label=ifelse(..y.. == 0,"",prettyNum(..y..,',')), group = Appt.Month), geom="text", color="black",
                    size=3, fontface="bold.italic")+
-    geom_hline(yintercept=avg_2022, linetype = "dashed") +
-     geom_text(data = ann_text_2022, aes(label = lab), size=2.5, fontface="bold", vjust = -1, nudge_x = 0)+
+    # geom_hline(yintercept=avg_2022, linetype = "dashed") +
+    #  geom_text(data = ann_text_2022, aes(label = lab), size=2.5, fontface="bold", vjust = -1, nudge_x = 0)+
      # labs(caption = paste0("*2019 Monthly Average: ", prettyNum(avg_2019, big.mark = ','),"\n**Includes Rad Onc data up to October, 2023", " and Radiology data up to October, 2023"))+
         labs(caption = paste0("*2022 Monthly Average: ", prettyNum(avg_2022, big.mark = ','),"\n**Includes Rad Onc data up to ", rad_onc_date, " and Radiology data up to ",radiology_date))+
       theme(plot.caption = element_text(hjust = 0, vjust = 0, face="italic", size = 12),
@@ -3105,7 +3105,7 @@ print(vol_breakdown_site_graph(site = "MSBI"))
 __________________________________________________________________________________________________________________________________________________________
 ### MSBI Volume by Dept `r todays_month`-`r todays_year`
 <!-- <span style='font-size: 16px; color: black'>**MSBI `r todays_month`-`r todays_year` MTD Volume by Department**</span><br/> -->
-<!-- <span style='font-size: 14px; color: black'>*Includes visits up to `r date_end`</span><br/> -->
+<span style='font-size: 14px; color: black'>*Includes visits up to `r date_end`</span><br/>
 <span style='font-size: 16px; color: black'>**MSBI `r todays_month`-`r todays_year` Volume by Department**</span><br/>
 ```{r MSBI Metrics Output5, fig.height = 7, fig.width = 13, echo = FALSE, warning = FALSE, message = FALSE, results = 'asis'}
 current_monthly_vol_dept_function(site = "MSBI")
@@ -3157,7 +3157,7 @@ print(vol_breakdown_site_graph(site = "MSDMG"))
 __________________________________________________________________________________________________________________________________________________________
 ### MSDMG Volume by Dept `r todays_month`-`r todays_year`
 <!-- <span style='font-size: 16px; color: black'>**MSBI `r todays_month`-`r todays_year` MTD Volume by Department**</span><br/> -->
-<!-- <span style='font-size: 14px; color: black'>*Includes visits up to `r date_end`</span><br/> -->
+<span style='font-size: 14px; color: black'>*Includes visits up to `r date_end`</span><br/>
 <span style='font-size: 16px; color: black'>**MSBI `r todays_month`-`r todays_year` Volume by Department**</span><br/>
 ```{r MSDMG Metrics Output5, fig.height = 7, fig.width = 13, echo = FALSE, warning = FALSE, message = FALSE, results = 'asis'}
 current_monthly_vol_dept_function(site = "MSDMG")
@@ -3209,7 +3209,7 @@ print(vol_breakdown_site_graph(site = "MSH- AMBULATORY CARE"))
 __________________________________________________________________________________________________________________________________________________________
 ### MSH- AMBULATORY CARE Volume by Dept `r todays_month`-`r todays_year`
 <!-- <span style='font-size: 16px; color: black'>**MSBI `r todays_month`-`r todays_year` MTD Volume by Department**</span><br/> -->
-<!-- <span style='font-size: 14px; color: black'>*Includes visits up to `r date_end`</span><br/> -->
+<span style='font-size: 14px; color: black'>*Includes visits up to `r date_end`</span><br/><span style='font-size: 14px; color: black'>*Includes visits up to `r date_end`</span><br/>
 <span style='font-size: 16px; color: black'>**MSBI `r todays_month`-`r todays_year` Volume by Department**</span><br/>
 ```{r MSH- AMBULATORY CARE Metrics Output5, fig.height = 7, fig.width = 13, echo = FALSE, warning = FALSE, message = FALSE, results = 'asis'}
 current_monthly_vol_dept_function(site = "MSH- AMBULATORY CARE")
@@ -3260,7 +3260,7 @@ print(vol_breakdown_site_graph(site = "MSH-MSDFP"))
 <!-- :::: -->
 ### MSH-MSDFP Volume by Dept
 <!-- <span style='font-size: 16px; color: black'>**MSH-MSDFP `r todays_month`-`r todays_year` MTD Volume by Department**</span><br/> -->
-<!-- <span style='font-size: 14px; color: black'>*Includes visits up to `r date_end`</span><br/> -->
+<span style='font-size: 14px; color: black'>*Includes visits up to `r date_end`</span><br/>
 <span style='font-size: 16px; color: black'>**MSH-MSDFP `r full_month`-`r full_year` Volume by Department**</span><br/>
 ```{r MSH-MSDFP Metrics Output5, fig.height = 7, fig.width = 13, echo = FALSE, warning = FALSE, message = FALSE, results = 'asis'}
 monthly_vol_dept_function(site = "MSH-MSDFP")
@@ -3313,7 +3313,7 @@ print(vol_breakdown_site_graph(site = "MSM"))
 __________________________________________________________________________________________________________________________________________________________
 ### MSM Volume by Dept `r todays_month`-`r todays_year`
 <!-- <span style='font-size: 16px; color: black'>**MSBI `r todays_month`-`r todays_year` MTD Volume by Department**</span><br/> -->
-<!-- <span style='font-size: 14px; color: black'>*Includes visits up to `r date_end`</span><br/> -->
+<span style='font-size: 14px; color: black'>*Includes visits up to `r date_end`</span><br/>
 <span style='font-size: 16px; color: black'>**MSBI `r todays_month`-`r todays_year` Volume by Department**</span><br/>
 ```{r MSM Metrics Output5, fig.height = 7, fig.width = 13, echo = FALSE, warning = FALSE, message = FALSE, results = 'asis'}
 current_monthly_vol_dept_function(site = "MSM")
@@ -3387,7 +3387,7 @@ ________________________________________________________________________________
 __________________________________________________________________________________________________________________________________________________________
 ### MSUS Volume by Dept `r todays_month`-`r todays_year`
 <!-- <span style='font-size: 16px; color: black'>**MSBI `r todays_month`-`r todays_year` MTD Volume by Department**</span><br/> -->
-<!-- <span style='font-size: 14px; color: black'>*Includes visits up to `r date_end`</span><br/> -->
+<span style='font-size: 14px; color: black'>*Includes visits up to `r date_end`</span><br/>
 <span style='font-size: 16px; color: black'>**MSBI `r todays_month`-`r todays_year` Volume by Department**</span><br/>
 ```{r MSUS Metrics Output5, fig.height = 7, fig.width = 13, echo = FALSE, warning = FALSE, message = FALSE, results = 'asis'}
 current_monthly_vol_dept_function(site = "MSUS")
@@ -3439,7 +3439,7 @@ print(vol_breakdown_site_graph(site = "MSW"))
 
 ### MSW Volume by Dept `r todays_month`-`r todays_year`
 <!-- <span style='font-size: 16px; color: black'>**MSBI `r todays_month`-`r todays_year` MTD Volume by Department**</span><br/> -->
-<!-- <span style='font-size: 14px; color: black'>*Includes visits up to `r date_end`</span><br/> -->
+<span style='font-size: 14px; color: black'>*Includes visits up to `r date_end`</span><br/>
 <span style='font-size: 16px; color: black'>**MSBI `r todays_month`-`r todays_year` Volume by Department**</span><br/>
 ```{r MSW Metrics Output5, fig.height = 7, fig.width = 13, echo = FALSE, warning = FALSE, message = FALSE, results = 'asis'}
 current_monthly_vol_dept_function(site = "MSW")
@@ -3490,7 +3490,7 @@ print(vol_breakdown_site_graph(site = "NETWORK"))
 <!-- :::: -->
 ### NETWORK Volume by Dept `r todays_month`-`r todays_year`
 <!-- <span style='font-size: 16px; color: black'>**MSBI `r todays_month`-`r todays_year` MTD Volume by Department**</span><br/> -->
-<!-- <span style='font-size: 14px; color: black'>*Includes visits up to `r date_end`</span><br/> -->
+<span style='font-size: 14px; color: black'>*Includes visits up to `r date_end`</span><br/>
 <span style='font-size: 16px; color: black'>**MSBI `r todays_month`-`r todays_year` Volume by Department**</span><br/>
 ```{r NETWORK Metrics Output5, fig.height = 7, fig.width = 13, echo = FALSE, warning = FALSE, message = FALSE, results = 'asis'}
 current_monthly_vol_dept_function(site = "NETWORK")
