@@ -285,8 +285,9 @@ scale_fill_MountSinai <- function(palette = "all", discrete = TRUE, reverse = FA
 
 scheduling_data_raw <- readRDS("/nfs/data/Applications/Ambulatory/Data_Updated/historical_data.rds") %>%
   mutate(Campus = ifelse(Campus == "MSDD", "MSDMG", Campus)) %>%
-  filter(!is.na(Campus)) %>%
-  filter(Campus %in% c("NETWORK","MSM","MSH-MSDFP","MSW","MSBI","MSUS","MSH- AMBULATORY CARE","MSDMG")) %>%
+  filter(Campus %!in% c("MS NOW","MSHS","OTHER")) %>%
+  # filter(!is.na(Campus)) %>%
+  # filter(Campus %in% c("NETWORK","MSM","MSH-MSDFP","MSW","MSBI","MSUS","MSH- AMBULATORY CARE","MSDMG")) %>%
   filter(Appt.Status == "Arrived")%>%
   filter(Appt.DateYear >= as.Date("2022-01-01", format="%Y-%m-%d") & Appt.DateYear <= as.Date(max(Appt.Made.DTTM), format="%Y-%m-%d"))
 
