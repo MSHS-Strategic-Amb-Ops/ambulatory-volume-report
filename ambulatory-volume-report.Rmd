@@ -661,6 +661,9 @@ knitr::include_graphics("Mount_Sinai_Logo_H.png")
 # Ambulatory Volume Summary
 *Report run date: `r report_run_date`*<br/>
 *Data Source: Epic Scheduling Data*<br/>
+*Includes all completed/arrived visits.*<br/>
+*Rad Onc and Radiology data is included only in monthly volumes.*<br/>
+*Excludes MS NOW, MSHP, and OTHER*<br/>
 __________________________________________________________________________________________________________________________________________________________
 
 ## MSHS {.tabset .tabset-fade .tabset-pills}
