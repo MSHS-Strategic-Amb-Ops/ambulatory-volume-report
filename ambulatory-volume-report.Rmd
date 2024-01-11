@@ -276,10 +276,11 @@ scale_fill_MountSinai <- function(palette = "all", discrete = TRUE, reverse = FA
 ```{r Import Data, echo = FALSE, warning = FALSE, message = FALSE}
 '%!in%' <- function(x,y)!('%in%'(x,y))
 
-# scheduling_data_raw <- readRDS("historical_data.rds") %>%
+# scheduling_data_raw <- readRDS(file.choose()) %>%
 #   mutate(Campus = ifelse(Campus == "MSDD", "MSDMG", Campus)) %>%
-#   filter(!is.na(Campus)) %>%
-#   filter(Campus %in% c("NETWORK","MSM","MSH-MSDFP","MSW","MSBI","MSUS","MSH- AMBULATORY CARE","MSDMG")) %>%
+#   filter(Campus %!in% c("MS NOW","MSHS","OTHER")) %>%
+#   # filter(!is.na(Campus)) %>%
+#   # filter(Campus %in% c("NETWORK","MSM","MSH-MSDFP","MSW","MSBI","MSUS","MSH- AMBULATORY CARE","MSDMG")) %>%
 #   filter(Appt.Status == "Arrived")%>%
 #   filter(Appt.DateYear >= as.Date("2022-01-01", format="%Y-%m-%d") & Appt.DateYear <= as.Date(max(Appt.Made.DTTM), format="%Y-%m-%d"))
 
@@ -291,14 +292,14 @@ scheduling_data_raw <- readRDS("/nfs/data/Applications/Ambulatory/Data_Updated/h
   filter(Appt.Status == "Arrived")%>%
   filter(Appt.DateYear >= as.Date("2022-01-01", format="%Y-%m-%d") & Appt.DateYear <= as.Date(max(Appt.Made.DTTM), format="%Y-%m-%d"))
 
-# rad_onc_data_raw <- read.csv("Rad_Onc_Data.csv")
+
 rad_onc_data_raw <- read.csv("/nfs/data/Applications/Ambulatory/Rad_Onc_Data.csv")
 radiology_data_raw <- read.csv("/nfs/data/Applications/Ambulatory/Radiology_Data.csv")
 radiology_ref <- read.csv("/nfs/data/Applications/Ambulatory/Radiology_Site_Mapping.csv")
 
-# rad_onc_data_raw <- read.csv("Rad_Onc_Data.csv")
-# radiology_data_raw <- read.csv("Radiology_Data.csv")
-# radiology_ref <- read.csv("Radiology_Site_Mapping.csv")
+# rad_onc_data_raw <- as.data.frame(read.csv("C:/Users/kweons01/Desktop/Strategic Initiatives - So Youn/Github/server-upload-updated/Rad_Onc_Data.csv"))
+# radiology_data_raw <- as.data.frame(read.csv("C:/Users/kweons01/Desktop/Strategic Initiatives - So Youn/Github/server-upload-updated/Radiology_Data.csv"))
+# radiology_ref <- as.data.frame(read.csv("C:/Users/kweons01/Desktop/Strategic Initiatives - So Youn/Github/server-upload-updated/Radiology_Site_Mapping.csv"))
 ```
 
 
